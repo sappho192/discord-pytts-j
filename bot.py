@@ -75,7 +75,7 @@ async def sayonce(ctx, arg):
                 sleep(.1)
             await vc.disconnect()
         else:
-            await ctx.send(f'{str(ctx.author.name)} is not in a channel')
+            await ctx.send(f'{str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
         # await ctx.message.delete()
     except AttributeError:
         return # skips when the user is not in voice
@@ -111,11 +111,11 @@ async def tts(ctx):
                 session.isTTSEnabled = True
                 session.voice_channel = vc
             else:
-                await ctx.send(f'{str(ctx.author.name)} is not in a channel')
-            await ctx.send(f'tts is enabled')
+                await ctx.send(f'{str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
+            await ctx.send(f'やっほ~ >_<)9')
         except AttributeError:
             print('AttributeError')
-            await ctx.send(f'{str(ctx.author.name)} is not in a channel')
+            await ctx.send(f'{str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
     else:
         # Remove TTSSession
         sessionKey = find_sessionKey(ctx)
@@ -133,7 +133,7 @@ async def tts(ctx):
             session.isTTSEnabled = False
             del ttsSessions[sessionKey]
             print(ttsSessions)
-            await ctx.send(f'tts is disabled')
+            await ctx.send(f'またね~!')
 
 @bot.event
 async def on_message(message):
