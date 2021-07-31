@@ -1,5 +1,6 @@
 {
     "_comment": "Clone this file and rename as 'settings.json', and replace the bot_api_token and tts endpoint with your data",
     "bot_api_token": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "bot2_api_token": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "tts_api_endpoint": "http://<HOSTNAME>:<PORT>/api/tts/"
 }
