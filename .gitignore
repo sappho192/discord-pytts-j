@@ -1,5 +1,6 @@
 # repo specific file
 settings.json
+tts.log
 *.wav
 
 # Byte-compiled / optimized / DLL files
