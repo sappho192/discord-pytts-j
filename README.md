@@ -26,3 +26,7 @@ Discord Japanese TTS bot based on OpenJTalk and Flask
 - Enter following command in Linux terminal
 `nohup python bot.py > bot.log &`
 
+- You can also run another bot with following command
+- Before running, replace `bot2_api_token` in settings.json
+`nohup python bot2.py > bot2.log &`
+
