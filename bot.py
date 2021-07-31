@@ -42,45 +42,6 @@ async def on_ready():
     print(f'logged in to {bot.user}')
 
 @bot.command()
-async def ping(ctx):
-    await ctx.send('pong!')
-
-@bot.command()
-async def sayf(ctx, arg):
-    encoded = parse.quote(str(arg))
-    endpoint = settings['tts_api_endpoint']
-    url = f'{endpoint}{encoded}'
-    print(f'url:{url}')
-    filepath = 'tts.wav'
-    request.urlretrieve(url, filepath)
-    await ctx.send(file=discord.File(filepath))
-    # await ctx.send(f'{str(arg)}!')
-
-@bot.command()
-async def sayonce(ctx, arg):
-    encoded = parse.quote(str(arg))
-    endpoint = settings['tts_api_endpoint']
-    url = f'{endpoint}{encoded}'
-    filepath = 'tts.wav'
-    request.urlretrieve(url, filepath)
-    
-    try:
-        voice_channel = ctx.author.voice.channel
-        channel = None
-        if voice_channel != None:
-            channel = voice_channel.name
-            vc = await voice_channel.connect()
-            vc.play(discord.FFmpegPCMAudio(source=filepath))
-            while vc.is_playing():
-                sleep(.1)
-            await vc.disconnect()
-        else:
-            await ctx.send(f'{str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
-        # await ctx.message.delete()
-    except AttributeError:
-        return # skips when the user is not in voice
-
-@bot.command()
 async def say(ctx, arg):
     encoded = parse.quote(str(arg))
     endpoint = settings['tts_api_endpoint']
