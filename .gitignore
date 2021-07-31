@@ -2,6 +2,7 @@
 settings.json
 tts.log
 bot.log
+bot2.log
 *.wav
 
 # Byte-compiled / optimized / DLL files
