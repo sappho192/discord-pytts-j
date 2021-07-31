@@ -1,4 +1,5 @@
 # OpenJTalk-based TTS server
+# Install flask
 # Install and setup OpenJTalk with referring following blog:
 # https://thr3a.hatenablog.com/entry/20180223/1519360909
 
