@@ -65,7 +65,7 @@ async def say(ctx, arg):
         await ctx.send(f'Can\'t find session for {ctx.author.name}')
 
 @bot.command()
-async def tts(ctx):
+async def tts3(ctx):
     session : TTSSession = find_sessionKey(ctx)
     if(session == None):
         # Join voice chat
