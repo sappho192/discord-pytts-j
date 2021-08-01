@@ -1,8 +1,10 @@
 # repo specific file
 settings.json
+settings.json.bak
 tts.log
 bot.log
 bot2.log
+bot3.log
 *.wav
 
 # Byte-compiled / optimized / DLL files
