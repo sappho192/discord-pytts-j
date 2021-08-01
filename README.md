@@ -11,6 +11,7 @@ Discord Japanese TTS bot based on OpenJTalk and Flask
 
 ## 2. TTS Bot
 - Discord.py, PyNaCl (`pip install discord pynacl`)
+- **(IMPORTANT) Turn on "SERVER MEMBERS INTENT" in your Discord Bot settings** [[Check here](https://support.discord.com/hc/en-us/articles/360040720412#privileged-intent-whitelisting)]
 
 # Setup instruction
 1. Install requirements stated above
@@ -26,7 +27,9 @@ Discord Japanese TTS bot based on OpenJTalk and Flask
 - Enter following command in Linux terminal
 `nohup python bot.py > bot.log &`
 
-- You can also run another bot with following command
-- Before running, replace `bot2_api_token` in settings.json
+- You can also run other bots with following command
+- To run 2nd bot, replace `bot2_api_token` in settings.json
 `nohup python bot2.py > bot2.log &`
+- To run 3rd bot, replace `bot3_api_token` in settings.json
+`nohup python bot3.py > bot3.log &`
 
