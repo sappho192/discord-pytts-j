@@ -2,7 +2,7 @@
 Discord Japanese TTS bot based on OpenJTalk and Flask
 
 # Requirements
-- Python 3.8.8 or above
+- Python 3.8.8 (recommended) or above
 - Linux(Debian, Ubuntu) recommended
 
 ## 1. TTS Server
