@@ -8,8 +8,12 @@ from time import sleep
 import json
 from datetime import datetime
 import os
+import hashlib
 
 intents = discord.Intents.default()
+intents.voice_states = True
+intents.members = True
+intents.guilds = True
 bot = Bot(command_prefix='!', intents=intents)
 global settings
 with open('settings.json', 'r') as file:
@@ -17,13 +21,18 @@ with open('settings.json', 'r') as file:
 print(json.dumps(settings))
 
 class TTSSession:
-    def __init__(self, userid):
-        self.userid = userid
+    def __init__(self, voice_channel, text_channel):
         date = datetime.now()
         timestamp = date.strftime("%Y-%b-%d-%H-%M-%S-%f")
-        self.guid = f'{userid}_{timestamp}'
+        self.voice_channel = voice_channel
+        self.text_channel = text_channel
+        print(f'tc: {str(text_channel.id)}')
+        enc = hashlib.md5()
+        enc.update(repr(text_channel.id).encode())
+        ustr = f'{enc.hexdigest()}_{timestamp}'
+        print(f'ustr: {ustr}')
+        self.guid = ustr
         print(f'uid created: {self.guid}')
-        self.voice_channel = None
         self.isTTSEnabled = False
 
 global ttsSessions
@@ -32,8 +41,8 @@ ttsSessions = dict()
 def find_sessionKey(ctx):
         sessionKey = None
         for key in ttsSessions:
-            userid = ttsSessions[key].userid
-            if (userid == ctx.author.id):
+            text_channel = ttsSessions[key].text_channel
+            if (text_channel.id == ctx.channel.id):
                 sessionKey = key
         return sessionKey
 
@@ -65,18 +74,19 @@ async def tts(ctx):
             voice_channel = ctx.author.voice.channel
             if voice_channel != None:
                 # Create TTSSession
-                session = TTSSession(ctx.author.id)
+                print('Creating new session')
+                session = TTSSession(voice_channel, ctx.channel)
                 ttsSessions[session.guid] = session
                 print(ttsSessions)
                 vc = await voice_channel.connect()
                 session.isTTSEnabled = True
                 session.voice_channel = vc
             else:
-                await ctx.send(f'{str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
+                await ctx.send(f'83: {str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
             await ctx.send(f'やっほ~ >_<)9')
-        except AttributeError:
-            print('AttributeError')
-            await ctx.send(f'{str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
+        except AttributeError as e:
+            print(e)
+            await ctx.send(f'87: {str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
     else:
         # Remove TTSSession
         sessionKey = find_sessionKey(ctx)
@@ -100,10 +110,24 @@ async def tts(ctx):
 async def on_message(message):
     chat = message.content
     print(f'author: {message.author}, chat: {chat}')
-    if (message.author != bot.user):
-        if(chat[0] == '!'):
-            await bot.process_commands(message)
-        else:
+    # if (message.author != bot.user):
+    #     if(chat[0] == '!'):
+    #         await bot.process_commands(message)
+    #     else:
+    #         ctx = await bot.get_context(message)
+    #         sessionKey = find_sessionKey(ctx)
+    #         if(sessionKey != None):
+    #             session = ttsSessions[sessionKey]
+    #             if(session.isTTSEnabled):
+    #                 # message.content = f'!sayf {chat}'
+    #                 message.content = f'!say {chat}'
+    #                 await bot.process_commands(message)
+    msgclient = message.guild.voice_client
+    if message.content.startswith('!'):
+        await bot.process_commands(message)
+    else:
+        if message.guild.voice_client:
+            print(message.content)
             ctx = await bot.get_context(message)
             sessionKey = find_sessionKey(ctx)
             if(sessionKey != None):
@@ -112,6 +136,13 @@ async def on_message(message):
                     # message.content = f'!sayf {chat}'
                     message.content = f'!say {chat}'
                     await bot.process_commands(message)
+
+
+@bot.event
+async def on_voice_state_update(member, before, after):
+    voice_state = member.guild.voice_client
+    if voice_state is not None and len(voice_state.channel.members) == 1:
+        await voice_state.disconnect()
 
 apikey = settings['bot_api_token']
 bot.run(apikey)
