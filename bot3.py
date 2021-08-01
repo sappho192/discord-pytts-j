@@ -140,5 +140,5 @@ async def on_voice_state_update(member, before, after):
     if voice_state is not None and len(voice_state.channel.members) == 1:
         await voice_state.disconnect()
 
-apikey = settings['bot2_api_token']
+apikey = settings['bot3_api_token']
 bot.run(apikey)

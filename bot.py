@@ -82,46 +82,42 @@ async def tts(ctx):
                 session.isTTSEnabled = True
                 session.voice_channel = vc
             else:
-                await ctx.send(f'83: {str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
+                await ctx.send(f'VCに入ってくださいね~!')
             await ctx.send(f'やっほ~ >_<)9')
         except AttributeError as e:
             print(e)
-            await ctx.send(f'87: {str(ctx.author.name)} is not in a channel(VCに入ってくださいね~!)')
+            await ctx.send(f'VCに入ってくださいね~!')
     else:
         # Remove TTSSession
         sessionKey = find_sessionKey(ctx)
         
-        if(sessionKey != None):
-            # Leave voice chat
-            session : TTSSession = ttsSessions[sessionKey]
-            await session.voice_channel.disconnect()
+        try:
+            voice_channel = ctx.author.voice.channel
+            if voice_channel != None:
+                if(sessionKey != None):
+                    # Leave voice chat
+                    session : TTSSession = ttsSessions[sessionKey]
+                    await session.voice_channel.disconnect()
 
-            wavpath = f'{session.guid}.wav'
-            if (os.path.exists(wavpath)):
-                os.remove(wavpath)
+                    wavpath = f'{session.guid}.wav'
+                    if (os.path.exists(wavpath)):
+                        os.remove(wavpath)
+                    else:
+                        print(f'Cannot remove the file {wavpath}')
+                    session.isTTSEnabled = False
+                    del ttsSessions[sessionKey]
+                    print(ttsSessions)
+                    await ctx.send(f'またね~!')
             else:
-                print(f'Cannot remove the file {wavpath}')
-            session.isTTSEnabled = False
-            del ttsSessions[sessionKey]
-            print(ttsSessions)
-            await ctx.send(f'またね~!')
+                await ctx.send(f'VCに入ってくださいね~!')
+        except AttributeError as e:
+            print(e)
+            await ctx.send(f'VCに入ってくださいね~!')
 
 @bot.event
 async def on_message(message):
     chat = message.content
     print(f'author: {message.author}, chat: {chat}')
-    # if (message.author != bot.user):
-    #     if(chat[0] == '!'):
-    #         await bot.process_commands(message)
-    #     else:
-    #         ctx = await bot.get_context(message)
-    #         sessionKey = find_sessionKey(ctx)
-    #         if(sessionKey != None):
-    #             session = ttsSessions[sessionKey]
-    #             if(session.isTTSEnabled):
-    #                 # message.content = f'!sayf {chat}'
-    #                 message.content = f'!say {chat}'
-    #                 await bot.process_commands(message)
     msgclient = message.guild.voice_client
     if message.content.startswith('!'):
         await bot.process_commands(message)
