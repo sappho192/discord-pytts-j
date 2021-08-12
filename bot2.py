@@ -59,11 +59,11 @@ async def say(ctx, arg):
     if (sessionKey != None):
         session : TTSSession = ttsSessions[sessionKey]
         filepath = f'{session.guid}.wav'
-        try:
-            request.urlretrieve(url, filepath)
-            session.voice_channel.play(discord.FFmpegPCMAudio(source=filepath))
-        except Exception as e:
-            await ctx.send(f'声が出ない！ 助けて ;^;')
+        # try:
+        request.urlretrieve(url, filepath)
+        session.voice_channel.play(discord.FFmpegPCMAudio(source=filepath))
+        # except Exception as e:
+            # await ctx.send(f'声が出ない！ 助けて ;^;')
     else:
         await ctx.send(f'Can\'t find session for {ctx.author.name}')
 
