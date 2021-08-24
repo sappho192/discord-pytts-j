@@ -9,6 +9,7 @@ import json
 from datetime import datetime
 import os
 import hashlib
+import re
 
 intents = discord.Intents.default()
 intents.voice_states = True
@@ -19,6 +20,22 @@ global settings
 with open('settings.json', 'r') as file:
     settings = json.load(file)
 print(json.dumps(settings))
+
+def sanitizeChat(chat):
+    # print(f'sanitizing chat: {chat}')
+    regex = r"<a*:\w+:\d+>" # replace Discord emoji
+    chat = re.sub(regex, "イモジ", chat, flags=(re.I|re.M))
+    regex = r"<@!\d+>"
+    chat = re.sub(regex, "あの,", chat, flags=(re.I|re.M))
+    # replace URL
+    regex = r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))'''
+    chat = re.sub(regex, "ユーアルエル", chat, flags=(re.I|re.M))
+    # replace Japanese quote mark and whitespaces
+    regex = r"「|」"
+    chat = re.sub(regex, "", chat, flags=(re.I|re.M))
+    chat = chat.replace(' ', '')
+    chat = chat.replace('　', '')
+    return chat
 
 class TTSSession:
     def __init__(self, voice_channel, text_channel):
@@ -133,6 +150,7 @@ async def on_message(message):
                 session = ttsSessions[sessionKey]
                 if(session.isTTSEnabled):
                     # message.content = f'!sayf {chat}'
+                    chat = sanitizeChat(chat)
                     message.content = f'!say {chat}'
                     await bot.process_commands(message)
 

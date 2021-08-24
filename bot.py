@@ -9,6 +9,7 @@ import json
 from datetime import datetime
 import os
 import hashlib
+import re
 
 intents = discord.Intents.default()
 intents.voice_states = True
@@ -20,17 +21,33 @@ with open('settings.json', 'r') as file:
     settings = json.load(file)
 print(json.dumps(settings))
 
+def sanitizeChat(chat):
+    # print(f'sanitizing chat: {chat}')
+    regex = r"<a*:\w+:\d+>" # replace Discord emoji
+    chat = re.sub(regex, "イモジ", chat, flags=(re.I|re.M))
+    regex = r"<@!\d+>"
+    chat = re.sub(regex, "あの,", chat, flags=(re.I|re.M))
+    # replace URL
+    regex = r'''(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))'''
+    chat = re.sub(regex, "ユーアルエル", chat, flags=(re.I|re.M))
+    # replace Japanese quote mark and whitespaces
+    regex = r"「|」"
+    chat = re.sub(regex, "", chat, flags=(re.I|re.M))
+    chat = chat.replace(' ', '')
+    chat = chat.replace('　', '')
+    return chat
+
 class TTSSession:
     def __init__(self, voice_channel, text_channel):
         date = datetime.now()
         timestamp = date.strftime("%Y-%b-%d-%H-%M-%S-%f")
         self.voice_channel = voice_channel
         self.text_channel = text_channel
-        print(f'tc: {str(text_channel.id)}')
+        # print(f'tc: {str(text_channel.id)}')
         enc = hashlib.md5()
         enc.update(repr(text_channel.id).encode())
         ustr = f'{enc.hexdigest()}_{timestamp}'
-        print(f'ustr: {ustr}')
+        # print(f'ustr: {ustr}')
         self.guid = ustr
         print(f'uid created: {self.guid}')
         self.isTTSEnabled = False
@@ -80,7 +97,7 @@ async def tts(ctx):
                 print('Creating new session')
                 session = TTSSession(voice_channel, ctx.channel)
                 ttsSessions[session.guid] = session
-                print(ttsSessions)
+                # print(ttsSessions)
                 vc = await voice_channel.connect()
                 session.isTTSEnabled = True
                 session.voice_channel = vc
@@ -109,7 +126,7 @@ async def tts(ctx):
                         print(f'Cannot remove the file {wavpath}')
                     session.isTTSEnabled = False
                     del ttsSessions[sessionKey]
-                    print(ttsSessions)
+                    # print(ttsSessions)
                     await ctx.send(f'またね~!')
             else:
                 await ctx.send(f'VCに入ってくださいね~!')
@@ -133,6 +150,7 @@ async def on_message(message):
                 session = ttsSessions[sessionKey]
                 if(session.isTTSEnabled):
                     # message.content = f'!sayf {chat}'
+                    chat = sanitizeChat(chat)
                     message.content = f'!say {chat}'
                     await bot.process_commands(message)
 
